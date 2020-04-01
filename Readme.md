@@ -1,7 +1,7 @@
 # Личный проект «Менеджер задач» [![Build status][travis-image]][travis-url]
 
 * Студент: [Yulia Karpova](https://up.htmlacademy.ru/ecmascript/11/user/34438).
-* Наставник: `Неизвестно`.
+* Наставник: `Ruslan Malogulko`.
 
 ---
 
