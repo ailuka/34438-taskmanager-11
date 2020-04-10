@@ -1,5 +1,6 @@
-export const createTaskEditTemplate = () => {
 import {COLORS, DAYS, MONTH_NAMES} from "../const.js";
+import {formatTime} from "../utils.js";
+
 const createColorsMarkup = (colors, currentColor) => {
   return colors.map((color, index) => {
     return (
@@ -38,8 +39,34 @@ const createRepeatingDaysMarkup = (days, repeatingDays) => {
     );
   }).join(`\n`);
 };
+
+export const createTaskEditTemplate = (task) => {
+  const {description, dueDate, color, repeatingDays} = task;
+
+  const isOverdue = dueDate instanceof Date && dueDate < Date.now();
+  const isDateShowing = !!dueDate;
+
+  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
+  const dateDisabled = isDateShowing ? `` : `disabled`;
+
+  const time = isDateShowing ? formatTime(dueDate) : ``;
+
+  // Флаг повторения:
+  // определяет, является ли задача регулярной;
+  // значение по умолчанию NO;
+  // изменение флага повторения сразу отображается в шапке карточки задачи (до сохранения) — цветная полоска становится волнистой, а не прямой;
+  const isRepeated = Object.values(repeatingDays).some(Boolean);
+  const repeatClass = isRepeated ? `card--repeat` : ``;
+  const repeatValue = isRepeated ? `yes` : `no`;
+  const daysDisabled = isRepeated ? `` : `disabled`;
+
+  const deadlineClass = isOverdue ? `card--deadline` : ``;
+
+  const colorsMarkup = createColorsMarkup(COLORS, color);
+  const repeatingDaysMarkup = createRepeatingDaysMarkup(DAYS, repeatingDays);
+
   return (
-    `<article class="card card--edit card--yellow card--repeat">
+    `<article class="card card--edit card--${color} ${repeatClass} ${deadlineClass}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__color-bar">
@@ -54,7 +81,7 @@ const createRepeatingDaysMarkup = (days, repeatingDays) => {
                 class="card__text"
                 placeholder="Start typing your text here..."
                 name="text"
-              >Here is a card with filled data</textarea>
+              >${description}</textarea>
             </label>
           </div>
 
@@ -65,24 +92,25 @@ const createRepeatingDaysMarkup = (days, repeatingDays) => {
                   date: <span class="card__date-status">yes</span>
                 </button>
 
-                <fieldset class="card__date-deadline">
+                <fieldset class="card__date-deadline" ${dateDisabled}>
                   <label class="card__input-deadline-wrap">
                     <input
                       class="card__date"
                       type="text"
                       placeholder=""
                       name="date"
-                      value="23 September 16:15"
+                      value="${date} ${time}"
                     />
                   </label>
                 </fieldset>
 
                 <button class="card__repeat-toggle" type="button">
-                  repeat:<span class="card__repeat-status">yes</span>
+                  repeat:<span class="card__repeat-status">${repeatValue}</span>
                 </button>
 
-                <fieldset class="card__repeat-days">
+                <fieldset class="card__repeat-days" ${daysDisabled}>
                   <div class="card__repeat-days-inner">
+                    ${repeatingDaysMarkup}
                   </div>
                 </fieldset>
               </div>
@@ -91,6 +119,7 @@ const createRepeatingDaysMarkup = (days, repeatingDays) => {
             <div class="card__colors-inner">
               <h3 class="card__colors-title">Color</h3>
               <div class="card__colors-wrap">
+                ${colorsMarkup}
               </div>
             </div>
           </div>
