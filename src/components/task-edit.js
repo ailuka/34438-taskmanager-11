@@ -1,5 +1,5 @@
 import {COLORS, DAYS, MONTH_NAMES} from "../const.js";
-import {formatTime} from "../utils.js";
+import {formatTime, createElement} from "../utils.js";
 
 const createColorsMarkup = (colors, currentColor) => {
   return colors.map((color, index) => {
@@ -40,7 +40,7 @@ const createRepeatingDaysMarkup = (days, repeatingDays) => {
   }).join(`\n`);
 };
 
-export const createTaskEditTemplate = (task) => {
+const createTaskEditTemplate = (task) => {
   const {description, dueDate, color, repeatingDays} = task;
 
   const isOverdue = dueDate instanceof Date && dueDate < Date.now();
@@ -51,10 +51,6 @@ export const createTaskEditTemplate = (task) => {
 
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
-  // Флаг повторения:
-  // определяет, является ли задача регулярной;
-  // значение по умолчанию NO;
-  // изменение флага повторения сразу отображается в шапке карточки задачи (до сохранения) — цветная полоска становится волнистой, а не прямой;
   const isRepeated = Object.values(repeatingDays).some(Boolean);
   const repeatClass = isRepeated ? `card--repeat` : ``;
   const repeatValue = isRepeated ? `yes` : `no`;
@@ -89,7 +85,7 @@ export const createTaskEditTemplate = (task) => {
             <div class="card__details">
               <div class="card__dates">
                 <button class="card__date-deadline-toggle" type="button">
-                  date: <span class="card__date-status">yes</span>
+                  date: <span class="card__date-status">${isDateShowing ? `yes` : `no`}</span>
                 </button>
 
                 <fieldset class="card__date-deadline" ${dateDisabled}>
@@ -133,3 +129,26 @@ export const createTaskEditTemplate = (task) => {
     </article>`
   );
 };
+
+export default class TaskEdit {
+  constructor(task) {
+    this._task = task;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTaskEditTemplate(this._task);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
