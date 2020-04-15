@@ -1,7 +1,7 @@
 import {MONTH_NAMES} from "../const.js";
-import {formatTime} from "../utils.js";
+import {formatTime, createElement} from "../utils.js";
 
-export const createTaskTemplate = (task) => {
+const createTaskTemplate = (task) => {
   const {description, dueDate, color, repeatingDays, isArchived, isFavorite} = task;
 
   const isOverdue = dueDate instanceof Date && dueDate < Date.now();
@@ -10,10 +10,6 @@ export const createTaskTemplate = (task) => {
   const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
-  // Флаг повторения:
-  // определяет, является ли задача регулярной;
-  // значение по умолчанию NO;
-  // изменение флага повторения сразу отображается в шапке карточки задачи (до сохранения) — цветная полоска становится волнистой, а не прямой;
   const isRepeated = Object.values(repeatingDays).some(Boolean);
   const repeatClass = isRepeated ? `card--repeat` : ``;
 
@@ -68,3 +64,26 @@ export const createTaskTemplate = (task) => {
     </article>`
   );
 };
+
+export default class Task {
+  constructor(task) {
+    this._task = task;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTaskTemplate(this._task);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
