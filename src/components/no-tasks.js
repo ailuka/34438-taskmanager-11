@@ -1,4 +1,4 @@
-import {createElement, render} from "../utils.js";
+import {createElement} from "../utils.js";
 
 const createNoTasksTemplate = () => {
   return (
