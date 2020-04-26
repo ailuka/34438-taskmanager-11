@@ -3,8 +3,10 @@ import TaskEditComponent from "../components/task-edit.js";
 import {render, replace, RenderPosition} from "../utils/render.js";
 
 export default class TaskController {
-  constructor(container) {
+  constructor(container, onDataChange) {
     this._container = container;
+    this._onDataChange = onDataChange;
+
     this._taskComponent = null;
     this._taskEditComponent = null;
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
@@ -23,6 +25,14 @@ export default class TaskController {
       evt.preventDefault();
       this._replaceEditToTask();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
+    });
+
+    this._taskComponent.setArchiveButtonClickHandler(() => {
+      this._onDataChange();
+    });
+
+    this._taskComponent.setEditButtonClickHandler(() => {
+      this._onDataChange();
     });
 
     render(this._container, this._taskComponent, RenderPosition.BEFOREEND);
