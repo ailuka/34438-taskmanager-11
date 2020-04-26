@@ -7,7 +7,7 @@ export default class TaskController {
     this._container = container;
     this._taskComponent = null;
     this._taskEditComponent = null;
-    this._inEscKeyDown = this._onEscKeyDown.bind(this);
+    this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
   render(task) {
@@ -25,7 +25,7 @@ export default class TaskController {
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    render(this._taskListElement, this._taskComponent, RenderPosition.BEFOREEND);
+    render(this._container, this._taskComponent, RenderPosition.BEFOREEND);
   }
 
   _replaceTaskToEdit() {
