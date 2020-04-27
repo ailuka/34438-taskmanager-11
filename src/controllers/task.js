@@ -13,6 +13,8 @@ export default class TaskController {
   }
 
   render(task) {
+    const oldTaskComponent = this._taskComponent;
+
     this._taskComponent = new TaskComponent(task);
     this._taskEditComponent = new TaskEditComponent(task);
 
@@ -39,7 +41,11 @@ export default class TaskController {
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    render(this._container, this._taskComponent, RenderPosition.BEFOREEND);
+    if (oldTaskComponent) {
+      replace(this._taskComponent, oldTaskComponent);
+    } else {
+      render(this._container, this._taskComponent, RenderPosition.BEFOREEND);
+    }
   }
 
   _replaceTaskToEdit() {
