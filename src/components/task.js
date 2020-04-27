@@ -4,7 +4,7 @@ import AbstractComponent from "../components/abstract-component.js";
 
 
 const createTaskTemplate = (task) => {
-  const {description, dueDate, color, repeatingDays, isArchived, isFavorite} = task;
+  const {description, dueDate, color, repeatingDays, isArchive, isFavorite} = task;
 
   const isOverdue = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
@@ -17,7 +17,7 @@ const createTaskTemplate = (task) => {
 
   const deadlineClass = isOverdue ? `card--deadline` : ``;
 
-  const archiveButtonInactiveClass = isArchived ? `` : `card__btn--disabled`;
+  const archiveButtonInactiveClass = isArchive ? `` : `card__btn--disabled`;
   const favoriteButtonInactiveClass = isFavorite ? `` : `card__btn--disabled`;
 
   return (
@@ -82,7 +82,7 @@ export default class Task extends AbstractComponent {
       .addEventListener(`click`, handler);
   }
 
-  setFavotitesButtonClickHandler(handler) {
+  setFavotiteButtonClickHandler(handler) {
     this.getElement().querySelector(`.card__btn--favorites`)
       .addEventListener(`click`, handler);
   }
