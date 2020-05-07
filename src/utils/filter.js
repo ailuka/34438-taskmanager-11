@@ -44,7 +44,7 @@ export const getTasksByFilter = (tasks, filterType) => {
     case FilterType.OVERDUE:
       return getOverdueTasks(tasks);
     case FilterType.REPEATING:
-      return getRepeatingTasks();
+      return getRepeatingTasks(tasks);
     case FilterType.TODAY:
       return getThisDayTasks(getNotArchiveTasks(tasks), today);
   }
