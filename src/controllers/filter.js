@@ -1,6 +1,6 @@
 import FilterComponent from "../components/filter.js";
 import {FilterType} from "../const.js";
-import {render, RenderPosition} from "../utils/render.js";
+import {render, replace, RenderPosition} from "../utils/render.js";
 import {getTasksByFilter} from "../utils/filter.js";
 
 export default class FilterController {
@@ -10,6 +10,8 @@ export default class FilterController {
 
     this._activeFilterType = FilterType.ALL;
     this._filterComponent = null;
+
+    this._onFilterChange = this._onFilterChange.bind(this);
   }
 
   render() {
@@ -23,7 +25,19 @@ export default class FilterController {
       };
     });
 
+    const oldFilterComponent = this._filterComponent;
     this._filterComponent = new FilterComponent(filters);
-    render(container, this._filterComponent, RenderPosition.BEFOREEND);
+    this._filterComponent.setFilterChangeHandler(this._onFilterChange);
+
+    if (oldFilterComponent) {
+      replace(this._filterComponent, oldFilterComponent);
+    } else {
+      render(container, this._filterComponent, RenderPosition.BEFOREEND);
+    }
+  }
+
+  _onFilterChange(filterType) {
+    this._tasksModel.setFilter(filterType);
+    this._activeFilterType = filterType;
   }
 }
