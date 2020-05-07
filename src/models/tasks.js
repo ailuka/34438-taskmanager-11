@@ -37,6 +37,21 @@ export default class Tasks {
     this._callHandlers(this._filterChangeHandlers);
   }
 
+  // Метод для удаления задачи.
+  removeTask(id) {
+    const index = this._tasks.findIndex((task) => task.id === id);
+
+    if (index === -1) {
+      return false;
+    }
+
+    this._tasks = [].concat(this._tasks.slice(0, index), this._tasks.slice(index + 1));
+
+    this._callHandlers(this._dataChangeHandlers);
+
+    return true;
+  }
+
   // Метод для обновления конкретной задачи. Принимает id обновляемой задачи
   // и обновленную задачу. Реализация метода переносится из BoardController.
   updateTask(id, task) {
@@ -47,9 +62,16 @@ export default class Tasks {
     }
 
     this._tasks = [].concat(this._tasks.slice(0, index), task, this._tasks.slice(index + 1));
+
     this._callHandlers(this._dataChangeHandlers);
 
     return true;
+  }
+
+  // Метод добавления новой задачи.
+  addTask(newTask) {
+    this._tasks = [].concat(newTask, this._tasks);
+    this._callHandlers(this._dataChangeHandlers);
   }
 
   // Метод для добавления функции изменения фильтров в масскив коллбэков.
