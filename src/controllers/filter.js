@@ -12,6 +12,9 @@ export default class FilterController {
     this._filterComponent = null;
 
     this._onFilterChange = this._onFilterChange.bind(this);
+    // Фильтры должны обновляться при изменении данных модели.
+    this._onDataChange = this._onDataChange.bind(this);
+    this._tasksModel.setDataChangeHandler(this._onDataChange);
   }
 
   render() {
@@ -39,5 +42,9 @@ export default class FilterController {
   _onFilterChange(filterType) {
     this._tasksModel.setFilter(filterType);
     this._activeFilterType = filterType;
+  }
+
+  _onDataChange() {
+    this.render();
   }
 }
