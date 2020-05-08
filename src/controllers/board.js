@@ -2,7 +2,7 @@ import LoadMoreButtonComponent from "../components/load-more-button.js";
 import NoTasksComponent from "../components/no-tasks.js";
 import SortComponent, {SortType} from "../components/sort.js";
 import TasksComponent from "../components/tasks.js";
-import TaskController from "../controllers/task.js";
+import TaskController, {Mode as TaskControllerMode, EmptyTask} from "../controllers/task.js";
 import {RenderPosition, render, remove} from "../utils/render.js";
 
 const SHOWING_TASKS_COUNT_ON_START = 8;
@@ -11,7 +11,8 @@ const SHOWING_TASKS_COUNT_BY_BUTTON = 8;
 const renderTasks = (taskListElement, tasks, onDataChange, onViewChange) => {
   return tasks.map((task) => {
     const taskController = new TaskController(taskListElement, onDataChange, onViewChange);
-    taskController.render(task);
+    taskController.render(task, TaskControllerMode.DEFAULT);
+
     return taskController;
   });
 };
