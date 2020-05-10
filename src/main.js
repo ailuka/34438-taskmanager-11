@@ -31,7 +31,9 @@ siteMenuComponent.setOnChange((menuItem) => {
   switch (menuItem) {
     case MenuItem.NEW_TASK:
       siteMenuComponent.setActiveItem(MenuItem.TASKS);
-      boardComponent.createTask();
+      filterController.reset();
+      boardController.resetSorting();
+      boardController.createTask();
       break;
   }
 });

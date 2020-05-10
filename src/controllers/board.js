@@ -85,6 +85,10 @@ export default class BoardController {
     this._creatingTask.render(EmptyTask, TaskControllerMode.ADDING);
   }
 
+  resetSorting() {
+    this._onSortTypeChange(SortType.DEFAULT);
+  }
+
   _renderTasks(tasks) {
     const taskListElement = this._tasksComponent.getElement();
 
