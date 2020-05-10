@@ -124,9 +124,9 @@ export default class BoardController {
 
     this._renderTasks(sortedTasks);
 
-    if (this._showedTasksCount >= sortedTasks.length) {
-      remove(this._loadMoreButtonComponent);
-    }
+    // if (this._showedTasksCount >= sortedTasks.length) {
+    //   remove(this._loadMoreButtonComponent);
+    // }
   }
 
   _onSortTypeChange(sortType) {
