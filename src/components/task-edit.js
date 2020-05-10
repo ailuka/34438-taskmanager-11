@@ -54,7 +54,7 @@ const createRepeatingDaysMarkup = (days, repeatingDays) => {
 
 const createTaskEditTemplate = (task, options = {}) => {
   const {dueDate} = task;
-  const {isDateShowing, isRepeatingTask, activeRepeatingDays, currentDescription: description, color} = options;
+  const {isDateShowing, isRepeatingTask, activeRepeatingDays, currentDescription: description, color, oldColor} = options;
 
   const isOverdue = dueDate instanceof Date && isOverdueDate(dueDate, new Date());
   const isBlockSaveButton = (isDateShowing && isRepeatingTask) ||
@@ -73,7 +73,7 @@ const createTaskEditTemplate = (task, options = {}) => {
   const repeatingDaysMarkup = createRepeatingDaysMarkup(DAYS, activeRepeatingDays);
 
   return (
-    `<article class="card card--edit card--${color} ${repeatClass} ${deadlineClass}">
+    `<article class="card card--edit card--${oldColor} ${repeatClass} ${deadlineClass}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__color-bar">
@@ -166,6 +166,7 @@ export default class TaskEdit extends AbstractSmartComponent {
     this._isDateShowing = !!task.dueDate;
     this._isRepeatingTask = Object.values(task.repeatingDays).some(Boolean);
     this._activeRepeatingDays = Object.assign({}, task.repeatingDays);
+    this._oldColor = task.color;
     this._activeColor = task.color;
     this._currentDescription = task.description;
     this._submitHandler = null;
@@ -182,7 +183,8 @@ export default class TaskEdit extends AbstractSmartComponent {
       isRepeatingTask: this._isRepeatingTask,
       activeRepeatingDays: this._activeRepeatingDays,
       currentDescription: this._currentDescription,
-      color: this._activeColor
+      color: this._activeColor,
+      oldColor: this._oldColor
     });
   }
 
