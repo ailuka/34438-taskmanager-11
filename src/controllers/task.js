@@ -62,8 +62,7 @@ export default class TaskController {
       }));
     });
 
-    this._taskEditComponent.setFormSubmitHandler((evt) => {
-      evt.preventDefault();
+    this._taskEditComponent.setFormSubmitHandler(() => {
       const newTaskData = this._taskEditComponent.getData();
       this._onDataChange(this, task, newTaskData);
     });
