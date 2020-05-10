@@ -53,8 +53,8 @@ const createRepeatingDaysMarkup = (days, repeatingDays) => {
 };
 
 const createTaskEditTemplate = (task, options = {}) => {
-  const {dueDate, color} = task;
-  const {isDateShowing, isRepeatingTask, activeRepeatingDays, currentDescription: description} = options;
+  const {dueDate} = task;
+  const {isDateShowing, isRepeatingTask, activeRepeatingDays, currentDescription: description, color} = options;
 
   const isOverdue = dueDate instanceof Date && isOverdueDate(dueDate, new Date());
   const isBlockSaveButton = (isDateShowing && isRepeatingTask) ||
@@ -166,6 +166,7 @@ export default class TaskEdit extends AbstractSmartComponent {
     this._isDateShowing = !!task.dueDate;
     this._isRepeatingTask = Object.values(task.repeatingDays).some(Boolean);
     this._activeRepeatingDays = Object.assign({}, task.repeatingDays);
+    this._activeColor = task.color;
     this._currentDescription = task.description;
     this._submitHandler = null;
     this._flatpickr = null;
@@ -180,7 +181,8 @@ export default class TaskEdit extends AbstractSmartComponent {
       isDateShowing: this._isDateShowing,
       isRepeatingTask: this._isRepeatingTask,
       activeRepeatingDays: this._activeRepeatingDays,
-      currentDescription: this._currentDescription
+      currentDescription: this._currentDescription,
+      color: this._activeColor
     });
   }
 
@@ -211,6 +213,7 @@ export default class TaskEdit extends AbstractSmartComponent {
     this._isRepeatingTask = Object.values(task.repeatingDays).some(Boolean);
     this._activeRepeatingDays = Object.assign({}, task.repeatingDays);
     this._currentDescription = task.description;
+    this._activeColor = task.color;
 
     this.rerender();
   }
@@ -270,6 +273,11 @@ export default class TaskEdit extends AbstractSmartComponent {
 
         const saveButton = this.getElement().querySelector(`.card__save`);
         saveButton.disabled = !isAllowableDescriptionLength(this._currentDescription);
+      });
+
+    element.querySelector(`.card__colors-wrap`)
+      .addEventListener(`change`, (evt) => {
+        this._activeColor = evt.target.value;
       });
   }
 
