@@ -1,5 +1,13 @@
 import AbstractComponent from "../components/abstract-component.js";
 
+/*
+    filter = {
+      title: filterType,
+      count: getTasksByFilter().length,
+      checked: activeFilterType
+    }
+*/
+
 const createFilterMarkup = (filter, isChecked) => {
   const {title, count} = filter;
 
@@ -7,6 +15,7 @@ const createFilterMarkup = (filter, isChecked) => {
     `<input
       type="radio"
       id="filter__${title}"
+      data-filter-type="${title}"
       class="filter__input visually-hidden"
       name="filter"
       ${isChecked ? `checked` : ``}
@@ -18,7 +27,7 @@ const createFilterMarkup = (filter, isChecked) => {
 };
 
 const createFilterTemplate = (filters) => {
-  const filtersMarkup = filters.map((filter, i) => createFilterMarkup(filter, i === 0)).join(`\n`);
+  const filtersMarkup = filters.map((filter) => createFilterMarkup(filter, filter.checked)).join(`\n`);
 
   return (
     `<section class="main__filter filter container">
@@ -35,5 +44,12 @@ export default class Filter extends AbstractComponent {
 
   getTemplate() {
     return createFilterTemplate(this._filters);
+  }
+
+  setFilterChangeHandler(handler) {
+    this.getElement().addEventListener(`change`, (evt) => {
+      const filterName = evt.target.dataset.filterType;
+      handler(filterName);
+    });
   }
 }
