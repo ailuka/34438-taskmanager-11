@@ -89,6 +89,14 @@ export default class BoardController {
     this._onSortTypeChange(SortType.DEFAULT);
   }
 
+  hide() {
+    this._container.hide();
+  }
+
+  show() {
+    this._container.show();
+  }
+
   _renderTasks(tasks) {
     const taskListElement = this._tasksComponent.getElement();
 

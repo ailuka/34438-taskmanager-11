@@ -2,6 +2,7 @@ import BoardComponent from "./components/board.js";
 import BoardController from "./controllers/board.js";
 import FilterController from "./controllers/filter.js";
 import SiteMenuComponent, {MenuItem} from "./components/menu.js";
+import StatisticsComponent from "./components/statistics.js";
 import TasksModel from "./models/tasks.js";
 import {generateTasks} from "./mock/task.js";
 import {RenderPosition, render} from "./utils/render.js";
@@ -27,13 +28,27 @@ render(siteMainElement, boardComponent, RenderPosition.BEFOREEND);
 const boardController = new BoardController(boardComponent, tasksModel);
 boardController.render();
 
+const statisticsComponent = new StatisticsComponent();
+render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
+statisticsComponent.hide();
+
 siteMenuComponent.setOnChange((menuItem) => {
   switch (menuItem) {
     case MenuItem.NEW_TASK:
       siteMenuComponent.setActiveItem(MenuItem.TASKS);
+      statisticsComponent.hide();
       filterController.reset();
+      boardController.show();
       boardController.resetSorting();
       boardController.createTask();
+      break;
+    case MenuItem.STATISTICS:
+      boardController.hide();
+      statisticsComponent.show();
+      break;
+    case MenuItem.TASKS:
+      statisticsComponent.hide();
+      boardController.show();
       break;
   }
 });
