@@ -39,7 +39,6 @@ siteMenuComponent.setOnChange((menuItem) => {
       statisticsComponent.hide();
       filterController.reset();
       boardController.show();
-      boardController.resetSorting();
       boardController.createTask();
       break;
     case MenuItem.STATISTICS:
@@ -48,6 +47,7 @@ siteMenuComponent.setOnChange((menuItem) => {
       break;
     case MenuItem.TASKS:
       statisticsComponent.hide();
+      boardController.resetSorting();
       boardController.show();
       break;
   }
