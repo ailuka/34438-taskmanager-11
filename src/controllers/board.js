@@ -135,10 +135,6 @@ export default class BoardController {
     const sortedTasks = getSortedTasks(tasks, this._sortComponent.getSortType(), prevTasksCount, newTasksCount);
 
     this._renderTasks(sortedTasks);
-
-    // if (this._showedTasksCount >= sortedTasks.length) {
-    //   remove(this._loadMoreButtonComponent);
-    // }
   }
 
   _onSortTypeChange(sortType) {
