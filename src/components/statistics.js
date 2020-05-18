@@ -51,8 +51,12 @@ const calcUniqCountColor = (tasks, color) => {
   return tasks.filter((it) => it.color === color).length;
 };
 
-const renderColorsChart = (colorsCanvas, tasks) => {
-  const colors = tasks.map((task) => task.color).filter(getUniqItems);
+const renderColorsChart = (colorsCanvas, tasks, dateFrom, dateTo) => {
+  const tasksBetweenDates = tasks.filter((task) => {
+    return moment(task.dueDate).isBetween(dateFrom, dateTo, undefined, `[]`);
+  });
+
+  const colors = tasksBetweenDates.map((task) => task.color).filter(getUniqItems);
 
   return new Chart(colorsCanvas, {
     plugins: [ChartDataLabels],
@@ -60,7 +64,7 @@ const renderColorsChart = (colorsCanvas, tasks) => {
     data: {
       labels: colors,
       datasets: [{
-        data: colors.map((color) => calcUniqCountColor(tasks, color)),
+        data: colors.map((color) => calcUniqCountColor(tasksBetweenDates, color)),
         backgroundColor: colors.map((color) => colorToHex[color])
       }]
     },
@@ -91,7 +95,7 @@ const renderColorsChart = (colorsCanvas, tasks) => {
       },
       title: {
         display: true,
-        text: `TASKS BY: COLORS`,
+        text: `DONE BY: COLORS`,
         fontSize: 16,
         fontColor: `#000000`
       },
@@ -226,6 +230,7 @@ export default class Statistics extends AbstractSmartComponent {
   constructor(tasksModel, dateFrom, dateTo) {
     super();
     this._tasks = tasksModel.getTasks();
+    this._archivedTasks = this._tasks.slice().filter((task) => task.isArchive);
     this._dateFrom = dateFrom;
     this._dateTo = dateTo;
 
@@ -238,19 +243,19 @@ export default class Statistics extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createStatisticsTemplate(this._tasks, this._dateFrom, this._dateTo);
+    return createStatisticsTemplate(this._archivedTasks, this._dateFrom, this._dateTo);
   }
 
   show() {
     super.show();
 
-    this.rerender(this._tasks, this._dateFrom, this._dateTo);
+    this.rerender(this._archivedTasks, this._dateFrom, this._dateTo);
   }
 
   recoveryListeners() {}
 
   rerender(tasks, dateFrom, dateTo) {
-    this._tasks = tasks;
+    this._archivedTasks = tasks;
     this._dateFrom = dateFrom;
     this._dateTo = dateTo;
 
@@ -269,8 +274,8 @@ export default class Statistics extends AbstractSmartComponent {
 
     this._resetCharts();
 
-    this._daysChart = renderDaysChart(daysCanvas, this._tasks, this._dateFrom, this._dateTo);
-    this._colorsChart = renderColorsChart(colorsCanvas, this._tasks);
+    this._daysChart = renderDaysChart(daysCanvas, this._archivedTasks, this._dateFrom, this._dateTo);
+    this._colorsChart = renderColorsChart(colorsCanvas, this._archivedTasks, this._dateFrom, this._dateTo);
   }
 
   _resetCharts() {
@@ -297,7 +302,7 @@ export default class Statistics extends AbstractSmartComponent {
       mode: `range`,
       onChange: (dates) => {
         if (dates.length === 2) {
-          this.rerender(this._tasks, dates[0], dates[1]);
+          this.rerender(this._archivedTasks, dates[0], dates[1]);
         }
       }
     });
