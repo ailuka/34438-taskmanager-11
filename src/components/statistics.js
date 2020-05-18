@@ -54,7 +54,7 @@ const renderDaysChart = (daysCanvas, tasks, dateFrom, dateTo) => {
     data: {
       labels: formattedDates,
       datasets: [{
-        label: `Количество выполненных задач за день периода`,
+        // label: `Количество выполненных задач за день периода`,
         data: tasksCountOnDay,
         backgroundColor: `transparent`,
         borderColor: `#000000`,
@@ -67,6 +67,17 @@ const renderDaysChart = (daysCanvas, tasks, dateFrom, dateTo) => {
     },
     // Configuration options go here
     options: {
+      legend: {
+        display: false,
+      },
+      layout: {
+        padding: {
+          top: 20
+        }
+      },
+      tooltips: {
+        enabled: true,
+      },
       plugins: {
         datalabels: {
           font: {
@@ -74,43 +85,29 @@ const renderDaysChart = (daysCanvas, tasks, dateFrom, dateTo) => {
           },
           color: `#ffffff`
         },
-        legend: {
-          display: false,
-        },
-        title: {
-          display: false,
-        },
-        tooltips: {
-          enabled: false,
-        },
-        scales: {
-          yAxes: [{
-            ticks: {
-              beginAtZero: true,
-              display: false
-            },
-            gridLines: {
-              display: false,
-              drawBorder: false
-            }
-          }],
-          xAxes: [{
-            ticks: {
-              fontStyle: `bold`,
-              fontColor: `#000000`
-            },
-            gridLines: {
-              display: false,
-              drawBorder: false
-            }
-          }]
-        },
-        layout: {
-          padding: {
-            top: 20
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+            display: false
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
           }
-        },
-      }
+        }],
+        xAxes: [{
+          ticks: {
+            fontStyle: `bold`,
+            fontColor: `#000000`
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          }
+        }]
+      },
     }
   });
 };
