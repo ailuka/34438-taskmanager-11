@@ -5,6 +5,14 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import moment from "moment";
 import flatpickr from "flatpickr";
 
+const colorToHex = {
+  black: `#000000`,
+  blue: `#0c5cdd`,
+  green: `#31b55c`,
+  pink: `#ff3cb9`,
+  yellow: `#ffe125`,
+};
+
 const getTasksByDateRange = (tasks, dateFrom, dateTo) => {
   return tasks.filter((task) => {
     const dueDate = task.dueDate;
@@ -33,6 +41,72 @@ const calculateBetweenDates = (from, to) => {
   }
 
   return result;
+};
+
+const getUniqItems = (item, index, array) => {
+  return array.indexOf(item) === index;
+};
+
+const calcUniqCountColor = (tasks, color) => {
+  return tasks.filter((it) => it.color === color).length;
+};
+
+const renderColorsChart = (colorsCanvas, tasks) => {
+  const colors = tasks.map((task) => task.color).filter(getUniqItems);
+
+  return new Chart(colorsCanvas, {
+    plugins: [ChartDataLabels],
+    type: `pie`,
+    data: {
+      labels: colors,
+      datasets: [{
+        data: colors.map((color) => calcUniqCountColor(tasks, color)),
+        backgroundColor: colors.map((color) => colorToHex[color])
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          display: false
+        }
+      },
+      tooltips: {
+        callbacks: {
+          label: (tooltipItem, data) => {
+            const allData = data.datasets[tooltipItem.datasetIndex].data;
+            const tooltipData = allData[tooltipItem.index];
+            const total = allData.reduce((acc, it) => acc + parseFloat(it));
+            const tooltipPercentage = Math.round((tooltipData / total) * 100);
+            return `${tooltipData} TASKS — ${tooltipPercentage}%`;
+          }
+        },
+        displayColors: false,
+        backgroundColor: `#ffffff`,
+        bodyFontColor: `#000000`,
+        borderColor: `#000000`,
+        borderWidth: 1,
+        cornerRadius: 0,
+        xPadding: 15,
+        yPadding: 15
+      },
+      title: {
+        display: true,
+        text: `TASKS BY: COLORS`,
+        fontSize: 16,
+        fontColor: `#000000`
+      },
+      legend: {
+        position: `left`,
+        labels: {
+          boxWidth: 15,
+          padding: 25,
+          fontStyle: 500,
+          fontColor: `#000000`,
+          fontSize: 13
+        }
+      }
+    }
+  });
 };
 
 const renderDaysChart = (daysCanvas, tasks, dateFrom, dateTo) => {
@@ -156,6 +230,7 @@ export default class Statistics extends AbstractSmartComponent {
     this._dateTo = dateTo;
 
     this._daysChart = null;
+    this._colorsChart = null;
 
     this._applyFlatpickr(this.getElement().querySelector(`.statistic__period-input`));
 
@@ -190,16 +265,23 @@ export default class Statistics extends AbstractSmartComponent {
     this._applyFlatpickr(this.getElement().querySelector(`.statistic__period-input`));
 
     const daysCanvas = element.querySelector(`.statistic__days`);
+    const colorsCanvas = element.querySelector(`.statistic__colors`);
 
     this._resetCharts();
 
     this._daysChart = renderDaysChart(daysCanvas, this._tasks, this._dateFrom, this._dateTo);
+    this._colorsChart = renderColorsChart(colorsCanvas, this._tasks);
   }
 
   _resetCharts() {
     if (this._daysChart) {
       this._daysChart.destroy();
       this._daysChart = null;
+    }
+
+    if (this._colorsChart) {
+      this._colorsChart.destroy();
+      this._colorsChart = null;
     }
   }
 
