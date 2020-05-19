@@ -25,6 +25,11 @@ export default class Tasks {
     return this._tasks;
   }
 
+  // Метод для получения выполненных задач.
+  getArchivedTasks() {
+    return getTasksByFilter(this._tasks, FilterType.ARCHIVE);
+  }
+
   // Метод для записи задач.
   setTasks(tasks) {
     this._tasks = Array.from(tasks);

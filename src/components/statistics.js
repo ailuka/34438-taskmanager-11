@@ -229,8 +229,10 @@ const createStatisticsTemplate = (tasks, dateFrom, dateTo) => {
 export default class Statistics extends AbstractSmartComponent {
   constructor(tasksModel, dateFrom, dateTo) {
     super();
-    this._tasks = tasksModel.getTasks();
-    this._archivedTasks = this._tasks.slice().filter((task) => task.isArchive);
+    this._tasksModel = tasksModel;
+
+    this._initialDateForm = dateFrom;
+    this._initialDateTo = dateTo;
     this._dateFrom = dateFrom;
     this._dateTo = dateTo;
 
@@ -239,23 +241,25 @@ export default class Statistics extends AbstractSmartComponent {
 
     this._applyFlatpickr(this.getElement().querySelector(`.statistic__period-input`));
 
+    this._onDataChange = this._onDataChange.bind(this);
+    this._tasksModel.setDataChangeHandler(this._onDataChange);
+
     this._renderCharts();
   }
 
   getTemplate() {
-    return createStatisticsTemplate(this._archivedTasks, this._dateFrom, this._dateTo);
+    return createStatisticsTemplate(this._tasksModel.getArchivedTasks(), this._dateFrom, this._dateTo);
   }
 
   show() {
     super.show();
 
-    this.rerender(this._archivedTasks, this._dateFrom, this._dateTo);
+    this.rerender(this._dateFrom, this._dateTo);
   }
 
   recoveryListeners() {}
 
-  rerender(tasks, dateFrom, dateTo) {
-    this._archivedTasks = tasks;
+  rerender(dateFrom, dateTo) {
     this._dateFrom = dateFrom;
     this._dateTo = dateTo;
 
@@ -274,8 +278,10 @@ export default class Statistics extends AbstractSmartComponent {
 
     this._resetCharts();
 
-    this._daysChart = renderDaysChart(daysCanvas, this._archivedTasks, this._dateFrom, this._dateTo);
-    this._colorsChart = renderColorsChart(colorsCanvas, this._archivedTasks, this._dateFrom, this._dateTo);
+    const archivedTasks = this._tasksModel.getArchivedTasks();
+
+    this._daysChart = renderDaysChart(daysCanvas, archivedTasks, this._dateFrom, this._dateTo);
+    this._colorsChart = renderColorsChart(colorsCanvas, archivedTasks, this._dateFrom, this._dateTo);
   }
 
   _resetCharts() {
@@ -302,9 +308,13 @@ export default class Statistics extends AbstractSmartComponent {
       mode: `range`,
       onChange: (dates) => {
         if (dates.length === 2) {
-          this.rerender(this._archivedTasks, dates[0], dates[1]);
+          this.rerender(dates[0], dates[1]);
         }
       }
     });
+  }
+
+  _onDataChange() {
+    this.rerender(this._initialDateForm, this._initialDateTo);
   }
 }
