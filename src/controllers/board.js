@@ -1,3 +1,4 @@
+import LoadingComponent from "../components/loading-component.js";
 import LoadMoreButtonComponent from "../components/load-more-button.js";
 import NoTasksComponent from "../components/no-tasks.js";
 import SortComponent, {SortType} from "../components/sort.js";
@@ -46,8 +47,10 @@ export default class BoardController {
     this._noTasksComponent = new NoTasksComponent();
     this._sortComponent = new SortComponent();
     this._tasksComponent = new TasksComponent();
+    this._loadingComponent = null;
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
     this._creatingTask = null;
+    this._isLoading = true;
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
@@ -61,10 +64,16 @@ export default class BoardController {
 
   render() {
     const container = this._container.getElement();
+    if (this._isLoading) {
+      this._loadingComponent = new LoadingComponent();
+      render(container, this._loadingComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+
     const tasks = this._tasksModel.getTasks();
     const isAllTasksArchived = tasks.every((task) => task.isArchive);
 
-    if (isAllTasksArchived) {
+    if (tasks.length <= 0 || isAllTasksArchived) {
       render(container, this._noTasksComponent, RenderPosition.BEFOREEND);
       return;
     }
@@ -83,6 +92,18 @@ export default class BoardController {
     const taskListElement = this._tasksComponent.getElement();
     this._creatingTask = new TaskController(taskListElement, this._onDataChange, this._onViewChange);
     this._creatingTask.render(EmptyTask, TaskControllerMode.ADDING);
+  }
+
+  setNoLoading() {
+    if (this._isLoading) {
+      this._isLoading = false;
+      if (this._loadingComponent) {
+        remove(this._loadingComponent);
+        this._loadingComponent = null;
+      }
+
+      this.render();
+    }
   }
 
   resetSorting() {
