@@ -2,7 +2,7 @@ import AbstractComponent from "../components/abstract-component.js";
 
 const createFilterMarkup = (filter, isChecked) => {
   const {title, count} = filter;
-  const isDisabled = count === 0 ? `disabled` : ``
+  const isDisabled = count === 0 ? `disabled` : ``;
 
   return (
     `<input
