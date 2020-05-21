@@ -5,10 +5,8 @@ import FilterController from "./controllers/filter.js";
 import SiteMenuComponent, {MenuItem} from "./components/menu.js";
 import StatisticsComponent from "./components/statistics.js";
 import TasksModel from "./models/tasks.js";
-// import {generateTasks} from "./mock/task.js";
 import {RenderPosition, render} from "./utils/render.js";
 
-// const TASK_COUNT = 20;
 const AUTHORIZATION = `Basic cM7D101fhDLJHjlulckBw10YXNzd29y0987hkQFo=`;
 
 const dateTo = new Date();
@@ -24,10 +22,8 @@ const siteMenuComponent = new SiteMenuComponent();
 
 render(siteHeaderElement, siteMenuComponent, RenderPosition.BEFOREEND);
 
-// const tasks = generateTasks(TASK_COUNT);
 const api = new API(AUTHORIZATION);
 const tasksModel = new TasksModel();
-// tasksModel.setTasks(tasks);
 
 const filterController = new FilterController(siteMainElement, tasksModel);
 filterController.render();
