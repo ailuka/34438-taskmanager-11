@@ -26,6 +26,26 @@ export const EmptyTask = {
   isArchive: false,
 };
 
+const parseFormData = (formData) => {
+  const repeatingDays = DAYS.reduce((acc, day) => {
+    acc[day] = false;
+    return acc;
+  }, {});
+  const date = formData.get(`date`);
+
+  return new TaskModel({
+    "description": formData.get(`text`),
+    "color": formData.get(`color`),
+    "due_date": date ? new Date(date) : null,
+    "repeating_days": formData.getAll(`repeat`).reduce((acc, day) => {
+      acc[day] = true;
+      return acc;
+    }, repeatingDays),
+    "is_favorite": false,
+    "is_archived": false,
+  });
+};
+
 export default class TaskController {
   constructor(container, onDataChange, onViewChange) {
     this._container = container;
