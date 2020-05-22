@@ -5,7 +5,7 @@ import FilterController from "./controllers/filter.js";
 import SiteMenuComponent, {MenuItem} from "./components/menu.js";
 import StatisticsComponent from "./components/statistics.js";
 import TasksModel from "./models/tasks.js";
-import {RenderPosition, render} from "./utils/render.js";
+import {render, RenderPosition} from "./utils/render.js";
 
 const AUTHORIZATION = `Basic cM7D101fhDLJHjlulckBw10YXNzd29y0987hkQFo=`;
 
@@ -16,25 +16,22 @@ const dateFrom = (() => {
   return d;
 })();
 
-const siteMainElement = document.querySelector(`.main`);
-const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
-const siteMenuComponent = new SiteMenuComponent();
-
-render(siteHeaderElement, siteMenuComponent, RenderPosition.BEFOREEND);
-
 const api = new API(AUTHORIZATION);
 const tasksModel = new TasksModel();
 
-const filterController = new FilterController(siteMainElement, tasksModel);
-filterController.render();
+const siteMainElement = document.querySelector(`.main`);
+const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
+const siteMenuComponent = new SiteMenuComponent();
+const statisticsComponent = new StatisticsComponent(tasksModel, dateFrom, dateTo);
 
 const boardComponent = new BoardComponent();
-render(siteMainElement, boardComponent, RenderPosition.BEFOREEND);
-
 const boardController = new BoardController(boardComponent, tasksModel);
-boardController.render();
+const filterController = new FilterController(siteMainElement, tasksModel);
 
-const statisticsComponent = new StatisticsComponent(tasksModel, dateFrom, dateTo);
+render(siteHeaderElement, siteMenuComponent, RenderPosition.BEFOREEND);
+filterController.render();
+render(siteMainElement, boardComponent, RenderPosition.BEFOREEND);
+boardController.render();
 render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
 statisticsComponent.hide();
 
