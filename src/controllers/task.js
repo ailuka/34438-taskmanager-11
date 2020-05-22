@@ -1,7 +1,8 @@
 import TaskComponent from "../components/task.js";
 import TaskEditComponent from "../components/task-edit.js";
+import TaskModel from "../models/task.js";
 import {render, replace, remove, RenderPosition} from "../utils/render.js";
-import {Color} from "../const.js";
+import {Color, DAYS} from "../const.js";
 
 export const Mode = {
   ADDING: `adding`,
@@ -54,6 +55,7 @@ export default class TaskController {
     this._mode = Mode.DEFAULT;
     this._taskComponent = null;
     this._taskEditComponent = null;
+
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
@@ -71,20 +73,24 @@ export default class TaskController {
     });
 
     this._taskComponent.setArchiveButtonClickHandler(() => {
-      this._onDataChange(this, task, Object.assign({}, task, {
-        isArchive: !task.isArchive
-      }));
+      const newTask = TaskModel.clone(task);
+      newTask.isArchive = !newTask.isArchive;
+
+      this._onDataChange(this, task, newTask);
     });
 
     this._taskComponent.setFavoriteButtonClickHandler(() => {
-      this._onDataChange(this, task, Object.assign({}, task, {
-        isFavorite: !task.isFavorite
-      }));
+      const newTask = TaskModel.clone(task);
+      newTask.isFavorite = !newTask.isFavorite;
+
+      this._onDataChange(this, task, newTask);
     });
 
     this._taskEditComponent.setFormSubmitHandler(() => {
-      const newTaskData = this._taskEditComponent.getData();
-      this._onDataChange(this, task, newTaskData);
+      const formData = this._taskEditComponent.getData();
+      const data = parseFormData(formData);
+
+      this._onDataChange(this, task, data);
     });
 
     this._taskEditComponent.setDeleteButtonClickHandler(() => {
