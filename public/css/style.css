@@ -683,6 +683,13 @@ body {
   width: 45px;
   height: 45px;
 }
+
+.card--edit .card--error-frame,
+.card--edit .card--error-frame.card__inner:hover {
+  outline: 2px solid red;
+  box-shadow: 0 2px 38px 0 rgba(240, 0, 0, 0.19)
+}
+
 .card__repeat-days {
   border: 0;
   padding: 0;

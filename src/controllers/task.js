@@ -93,6 +93,8 @@ export default class TaskController {
       const data = parseFormData(formData);
 
       this._taskEditComponent.setData({
+        isError: false,
+        formState: `disabled`,
         saveButtonText: `Saving...`
       });
 
@@ -101,6 +103,8 @@ export default class TaskController {
 
     this._taskEditComponent.setDeleteButtonClickHandler(() => {
       this._taskEditComponent.setData({
+        isError: false,
+        formState: `disabled`,
         deleteButtonText: `Deleting...`
       });
 
@@ -149,6 +153,7 @@ export default class TaskController {
       this._taskComponent.getElement().style.animation = ``;
 
       this._taskEditComponent.setData({
+        isError: true,
         saveButtonText: `Save`,
         deleteButtonText: `Delete`,
       });

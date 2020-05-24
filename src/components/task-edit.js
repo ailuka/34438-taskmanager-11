@@ -9,6 +9,8 @@ const MIN_DESCRIPTION_LENGTH = 1;
 const MAX_DESCRIPTION_LENGTH = 140;
 
 const DefaultData = {
+  formState: ``,
+  isError: false,
   deleteButtonText: `Delete`,
   saveButtonText: `Save`,
 };
@@ -81,11 +83,13 @@ const createTaskEditTemplate = (task, options = {}) => {
 
   const deleteButtonText = externalData.deleteButtonText;
   const saveButtonText = externalData.saveButtonText;
+  const formState = externalData.formState;
+  const cardRedFrameClass = externalData.isError ? `card--error-frame` : ``;
 
   return (
     `<article class="card card--edit card--${oldColor} ${repeatClass} ${deadlineClass}">
-      <form class="card__form" method="get">
-        <div class="card__inner">
+      <form class="card__form" method="get" ${formState}>
+        <div class="card__inner ${cardRedFrameClass}">
           <div class="card__color-bar">
             <svg class="card__color-bar-wave" width="100%" height="10">
               <use xlink:href="#wave"></use>
