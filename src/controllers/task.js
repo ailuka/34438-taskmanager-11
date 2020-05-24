@@ -147,6 +147,11 @@ export default class TaskController {
     setTimeout(() => {
       this._taskEditComponent.getElement().style.animation = ``;
       this._taskComponent.getElement().style.animation = ``;
+
+      this._taskEditComponent.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`,
+      });
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 
