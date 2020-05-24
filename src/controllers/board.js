@@ -190,9 +190,12 @@ export default class BoardController {
           });
       }
     } else if (newData === null) {
-      // Удаление задачи.
-      this._tasksModel.removeTask(oldData.id);
-      this._updateTasks(this._showingTasksCount);
+      this._api.deleteTask(oldData.id)
+        .then(() => {
+          // Удаление задачи.
+          this._tasksModel.removeTask(oldData.id);
+          this._updateTasks(this._showingTasksCount);
+        });
     } else {
       this._api.updateTask(oldData.id, newData)
         .then((taskModel) => {
