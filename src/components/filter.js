@@ -1,15 +1,8 @@
 import AbstractComponent from "../components/abstract-component.js";
 
-/*
-    filter = {
-      title: filterType,
-      count: getTasksByFilter().length,
-      checked: activeFilterType
-    }
-*/
-
 const createFilterMarkup = (filter, isChecked) => {
   const {title, count} = filter;
+  const isDisabled = count === 0 ? `disabled` : ``;
 
   return (
     `<input
@@ -18,6 +11,7 @@ const createFilterMarkup = (filter, isChecked) => {
       data-filter-type="${title}"
       class="filter__input visually-hidden"
       name="filter"
+      ${isDisabled}
       ${isChecked ? `checked` : ``}
     />
     <label for="filter__${title}" class="filter__label">

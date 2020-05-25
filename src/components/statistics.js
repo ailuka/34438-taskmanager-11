@@ -235,6 +235,7 @@ export default class Statistics extends AbstractSmartComponent {
     this._initialDateTo = dateTo;
     this._dateFrom = dateFrom;
     this._dateTo = dateTo;
+    this._isHidden = true;
 
     this._daysChart = null;
     this._colorsChart = null;
@@ -251,7 +252,13 @@ export default class Statistics extends AbstractSmartComponent {
     return createStatisticsTemplate(this._tasksModel.getArchivedTasks(), this._dateFrom, this._dateTo);
   }
 
+  hide() {
+    this._isHidden = true;
+    super.hide();
+  }
+
   show() {
+    this._isHidden = false;
     super.show();
 
     this.rerender(this._dateFrom, this._dateTo);
@@ -264,6 +271,9 @@ export default class Statistics extends AbstractSmartComponent {
     this._dateTo = dateTo;
 
     super.rerender();
+    if (this._isHidden) {
+      this.hide();
+    }
 
     this._renderCharts();
   }

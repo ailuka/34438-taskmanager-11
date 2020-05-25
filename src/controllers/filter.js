@@ -7,6 +7,7 @@ export default class FilterController {
   constructor(container, tasksModel) {
     this._container = container;
     this._tasksModel = tasksModel;
+    this._isLoading = true;
 
     this._activeFilterType = FilterType.ALL;
     this._filterComponent = null;
@@ -36,6 +37,14 @@ export default class FilterController {
       replace(this._filterComponent, oldFilterComponent);
     } else {
       render(container, this._filterComponent, RenderPosition.BEFOREEND);
+    }
+  }
+
+  setNoLoading() {
+    if (this._isLoading) {
+      this._isLoading = false;
+
+      this.render();
     }
   }
 

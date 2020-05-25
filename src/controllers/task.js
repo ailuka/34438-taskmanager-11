@@ -1,7 +1,8 @@
 import TaskComponent from "../components/task.js";
 import TaskEditComponent from "../components/task-edit.js";
+import TaskModel from "../models/task.js";
 import {render, replace, remove, RenderPosition} from "../utils/render.js";
-import {Color} from "../const.js";
+import {Color, DAYS} from "../const.js";
 
 export const Mode = {
   ADDING: `adding`,
@@ -26,6 +27,26 @@ export const EmptyTask = {
   isArchive: false,
 };
 
+const parseFormData = (formData) => {
+  const repeatingDays = DAYS.reduce((acc, day) => {
+    acc[day] = false;
+    return acc;
+  }, {});
+  const date = formData.get(`date`);
+
+  return new TaskModel({
+    "description": formData.get(`text`),
+    "color": formData.get(`color`),
+    "due_date": date ? new Date(date) : null,
+    "repeating_days": formData.getAll(`repeat`).reduce((acc, day) => {
+      acc[day] = true;
+      return acc;
+    }, repeatingDays),
+    "is_favorite": false,
+    "is_archived": false,
+  });
+};
+
 export default class TaskController {
   constructor(container, onDataChange, onViewChange) {
     this._container = container;
@@ -34,6 +55,7 @@ export default class TaskController {
     this._mode = Mode.DEFAULT;
     this._taskComponent = null;
     this._taskEditComponent = null;
+
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
@@ -51,20 +73,24 @@ export default class TaskController {
     });
 
     this._taskComponent.setArchiveButtonClickHandler(() => {
-      this._onDataChange(this, task, Object.assign({}, task, {
-        isArchive: !task.isArchive
-      }));
+      const newTask = TaskModel.clone(task);
+      newTask.isArchive = !newTask.isArchive;
+
+      this._onDataChange(this, task, newTask);
     });
 
     this._taskComponent.setFavoriteButtonClickHandler(() => {
-      this._onDataChange(this, task, Object.assign({}, task, {
-        isFavorite: !task.isFavorite
-      }));
+      const newTask = TaskModel.clone(task);
+      newTask.isFavorite = !newTask.isFavorite;
+
+      this._onDataChange(this, task, newTask);
     });
 
     this._taskEditComponent.setFormSubmitHandler(() => {
-      const newTaskData = this._taskEditComponent.getData();
-      this._onDataChange(this, task, newTaskData);
+      const formData = this._taskEditComponent.getData();
+      const data = parseFormData(formData);
+
+      this._onDataChange(this, task, data);
     });
 
     this._taskEditComponent.setDeleteButtonClickHandler(() => {
