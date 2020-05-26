@@ -1,23 +1,31 @@
+import Task from "../models/task";
+
 const isOnline = () => {
   return window.navigator.onLine;
 };
 
 export default class Provider {
-  constructor(api) {
+  constructor(api, store) {
     this._api = api;
+    this._store = store;
   }
 
   getTasks() {
-    if (isOnline) {
-      return this._api.getTasks();
-    }
+    if (isOnline()) {
+      return this._api.getTasks()
+        .then((tasks) => {
+          tasks.forEach((task) => this._store.setItem(task.id, task.toRAW()));
 
-    // TODO: Offline logic.
-    return Promise.reject(`No offline logic is implemented.`);
+          return tasks;
+        });
+    }
+    const storeTasks = Object.values(this._store.getItems());
+
+    return Promise.resolve(Task.parseTasks(storeTasks));
   }
 
   createTask(task) {
-    if (isOnline) {
+    if (isOnline()) {
       return this._api.createTask(task);
     }
 
@@ -26,7 +34,7 @@ export default class Provider {
   }
 
   deleteTask(id) {
-    if (isOnline) {
+    if (isOnline()) {
       return this._api.deleteTask(id);
     }
 
@@ -35,7 +43,7 @@ export default class Provider {
   }
 
   updateTask(id, task) {
-    if (isOnline) {
+    if (isOnline()) {
       return this._api.updateTask(id, task);
     }
 
