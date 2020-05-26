@@ -66,3 +66,9 @@ api.getTasks()
   .catch(() => {
     boardController.setNoLoading();
   });
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`sw.js`)
+    .then(() => {})
+    .catch(() => {});
+});
