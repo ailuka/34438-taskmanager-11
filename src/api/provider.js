@@ -35,11 +35,13 @@ export default class Provider {
 
   deleteTask(id) {
     if (isOnline()) {
-      return this._api.deleteTask(id);
+      return this._api.deleteTask(id)
+        .then(() => this._store.removeItem(id));
     }
 
-    // TODO: Offline logic.
-    return Promise.reject(`No offline logic is implemented.`);
+    this._store.removeItem(id);
+
+    return Promise.resolve();
   }
 
   updateTask(id, task) {
