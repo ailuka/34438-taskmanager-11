@@ -38,10 +38,10 @@ const getSortedTasks = (tasks, sortType, from, to) => {
 };
 
 export default class BoardController {
-  constructor(container, tasksModel, apiWithProvider) {
+  constructor(container, tasksModel, api) {
     this._container = container;
     this._tasksModel = tasksModel;
-    this._apiWithProvider = apiWithProvider;
+    this._api = api;
 
     this._showedTaskControllers = [];
     this._showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
@@ -173,7 +173,7 @@ export default class BoardController {
         taskController.destroy();
         this._updateTasks(this._showingTasksCount);
       } else {
-        this._apiWithProvider.createTask(newData)
+        this._api.createTask(newData)
           .then((taskModel) => {
             this._tasksModel.addTask(taskModel);
             taskController.render(taskModel, TaskControllerMode.DEFAULT);
@@ -193,7 +193,7 @@ export default class BoardController {
           });
       }
     } else if (newData === null) {
-      this._apiWithProvider.deleteTask(oldData.id)
+      this._api.deleteTask(oldData.id)
         .then(() => {
           // Удаление задачи.
           this._tasksModel.removeTask(oldData.id);
@@ -203,7 +203,7 @@ export default class BoardController {
           taskController.shake();
         });
     } else {
-      this._apiWithProvider.updateTask(oldData.id, newData)
+      this._api.updateTask(oldData.id, newData)
         .then((taskModel) => {
           // Обновление задачи.
           const isSuccess = this._tasksModel.updateTask(oldData.id, taskModel);
