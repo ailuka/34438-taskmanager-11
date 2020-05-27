@@ -43,7 +43,8 @@ export default class Provider {
     }
 
     const localNewTaskId = nanoid();
-    const localNewTask = Task.clone(Object.assign(task, {id: localNewTaskId}));
+    task.setId(localNewTaskId);
+    const localNewTask = Task.clone(task);
 
     this._store.setItem(localNewTask.id, localNewTask.toRAW());
 
@@ -71,8 +72,8 @@ export default class Provider {
         });
     }
 
-    const localTask = Task.clone(Object.assign(task, {id}));
-
+    task.setId(id);
+    const localTask = Task.clone(task);
     this._store.setItem(id, localTask.toRAW());
 
     return Promise.resolve(localTask);

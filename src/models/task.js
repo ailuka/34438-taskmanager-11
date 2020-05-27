@@ -9,6 +9,10 @@ export default class Task {
     this.isArchive = Boolean(data[`is_archived`]);
   }
 
+  setId(id) {
+    this.id = id;
+  }
+
   toRAW() {
     return {
       "id": this.id,
