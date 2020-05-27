@@ -5,21 +5,31 @@ const isOnline = () => {
   return window.navigator.onLine;
 };
 
+const getSyncedTasks = (items) => {
+  return items.filter(({success}) => success)
+    .map(({payload}) => payload.task);
+};
+
+const createStoreStructure = (items) => {
+  return items.reduce((acc, current) => {
+    return Object.assign({}, acc, {
+      [current.id]: current,
+    });
+  }, {});
+};
+
 export default class Provider {
   constructor(api, store) {
     this._api = api;
     this._store = store;
+    this._isSyncRequired = false;
   }
 
   getTasks() {
     if (isOnline()) {
       return this._api.getTasks()
         .then((tasks) => {
-          const items = tasks.reduce((acc, current) => {
-            return Object.assign({}, acc, {
-              [current.id]: current,
-            });
-          }, {});
+          const items = createStoreStructure(tasks.map((task) => task.toRAW()));
 
           this._store.setItems(items);
 
@@ -47,6 +57,7 @@ export default class Provider {
     const localNewTask = Task.clone(task);
 
     this._store.setItem(localNewTask.id, localNewTask.toRAW());
+    this._isSyncRequired = true;
 
     return Promise.resolve(localNewTask);
   }
@@ -58,6 +69,26 @@ export default class Provider {
     }
 
     this._store.removeItem(id);
+    this._isSyncRequired = true;
+
+    return Promise.resolve();
+  }
+
+  sync() {
+    if (isOnline() && this._isSyncRequired) {
+      const storeTasks = Object.values(this._store.getItems());
+      this._isSyncRequired = false;
+
+      return this._api.sync(storeTasks)
+        .then((response) => {
+          const createdTasks = getSyncedTasks(response.created);
+          const updatedTasks = getSyncedTasks(response.updated);
+
+          const items = createStoreStructure([...createdTasks, ...updatedTasks]);
+
+          this._store.setItems(items);
+        });
+    }
 
     return Promise.resolve();
   }
@@ -75,6 +106,7 @@ export default class Provider {
     task.setId(id);
     const localTask = Task.clone(task);
     this._store.setItem(id, localTask.toRAW());
+    this._isSyncRequired = true;
 
     return Promise.resolve(localTask);
   }

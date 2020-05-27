@@ -79,3 +79,14 @@ window.addEventListener(`load`, () => {
     .then(() => {})
     .catch(() => {});
 });
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+
+  apiWithProvider.sync()
+    .catch(() => {});
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});

@@ -45,6 +45,16 @@ export default class API {
     });
   }
 
+  sync(data) {
+    return this._load({
+      url: `tasks/sync908o87`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json());
+  }
+
   updateTask(id, data) {
     return this._load({
       url: `tasks/${id}`,
