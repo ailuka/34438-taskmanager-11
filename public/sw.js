@@ -40,36 +40,41 @@ self.addEventListener(`activate`, (evt) => {
 
                       return null;
                     })
-                    .filter((key) => key !== null)
+                  .filter((key) => key !== null)
             )
         )
   );
 });
 
 const getRequest = (request) => {
-  fetch(request)
+  return fetch(request)
     .then((response) => {
+
       if (!response || response.status !== 200 || response.type !== `basic`) {
         return response;
       }
 
       const clonedResponse = response.clone();
+
       caches.open(CACHE_NAME)
         .then((cache) => cache.put(request, clonedResponse));
+
 
       return response;
     });
 };
 
 self.addEventListener(`fetch`, (evt) => {
+  const {request} = evt;
+
   evt.respondWith(
-      caches.match(evt.request)
+      caches.match(request)
         .then((cacheResponse) => {
           if (cacheResponse) {
             return cacheResponse;
           }
-          return getRequest(evt.request);
+
+          return getRequest(request);
         })
   );
 });
-
