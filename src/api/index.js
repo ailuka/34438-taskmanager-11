@@ -47,7 +47,7 @@ export default class API {
 
   sync(data) {
     return this._load({
-      url: `tasks/sync908o87`,
+      url: `tasks/sync`,
       method: Method.POST,
       body: JSON.stringify(data),
       headers: new Headers({"Content-Type": `application/json`})
